@@ -1,1 +1,33 @@
-cat: packaging/arch/PKGBUILD: No such file or directory
+# Maintainer recipe for the latest Nebula Video source from GitHub.
+pkgname=nebula-video-git
+pkgver=0.1.1
+pkgrel=1
+pkgdesc='Qt-based Linux video browser and local media player'
+arch=('x86_64' 'aarch64')
+url='https://github.com/a43039646-svg/Nebula-Video'
+license=('GPL3')
+depends=('qt6-base' 'qt6-webengine' 'qt6-multimedia')
+makedepends=('cmake' 'gcc' 'git' 'ninja')
+optdepends=('networkmanager: VPN profile management')
+provides=('nebula-video')
+conflicts=('nebula-video')
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  printf '0.1.1.r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -S "$srcdir/$pkgname" -B "$srcdir/$pkgname/build" -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build "$srcdir/$pkgname/build"
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install "$srcdir/$pkgname/build"
+  install -Dm644 "$srcdir/$pkgname/LICENSE" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

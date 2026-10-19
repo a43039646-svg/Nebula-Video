@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QComboBox>
 #include <QDialog>
+#include <QDateTime>
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -85,6 +86,10 @@ private:
             {QStringLiteral("Forward"), QStringLiteral("Вперёд")},
             {QStringLiteral("Reload"), QStringLiteral("Обновить")},
             {QStringLiteral("Home"), QStringLiteral("Домой")},
+            {QStringLiteral("Watch history"), QStringLiteral("История просмотров")},
+            {QStringLiteral("Open recently watched pages"), QStringLiteral("Открыть недавно просмотренное")},
+            {QStringLiteral("Clear history"), QStringLiteral("Очистить историю")},
+            {QStringLiteral("Close"), QStringLiteral("Закрыть")},
             {QStringLiteral("Library"), QStringLiteral("Библиотека")},
             {QStringLiteral("Show or hide your video library"), QStringLiteral("Показать или скрыть библиотеку видео")},
             {QStringLiteral("Enter an address or search the web"), QStringLiteral("Введите адрес сайта или поисковый запрос")},
@@ -289,6 +294,9 @@ public:
         toolbarLayout->addWidget(forwardButton);
         toolbarLayout->addWidget(reloadButton);
         toolbarLayout->addWidget(homeButton);
+        auto *historyButton = new QPushButton(tr("Watch history"), toolbar);
+        historyButton->setToolTip(tr("Open recently watched pages"));
+        toolbarLayout->addWidget(historyButton);
         libraryToggleButton_ = new QToolButton(toolbar);
         libraryToggleButton_->setText(tr("Library"));
         libraryToggleButton_->setCheckable(true);
@@ -466,6 +474,7 @@ public:
         });
         connect(vpnButton, &QPushButton::clicked, this, [this] { showVpnManager(); });
         connect(settingsButton, &QPushButton::clicked, this, [this] { showSettingsDialog(); });
+        connect(historyButton, &QPushButton::clicked, this, [this] { showWatchHistory(); });
         connect(adBlockButton_, &QToolButton::toggled, this, [this](bool enabled) {
             adBlocker_->setEnabled(enabled);
             settings_.setValue(QStringLiteral("browser/adBlockEnabled"), enabled);
@@ -479,10 +488,20 @@ public:
         connect(browser_, &QWebEngineView::urlChanged, this, [this](const QUrl &url) {
             if (pages_->currentWidget() == browser_)
                 addressBar_->setText(url.toString());
+            recordWatchHistory(url, browser_->title());
         });
         connect(browser_, &QWebEngineView::titleChanged, this, [this](const QString &title) {
             if (pages_->currentWidget() == browser_)
                 setWindowTitle(title.isEmpty() ? QStringLiteral("Nebula Video") : title + QStringLiteral(" — Nebula Video"));
+            recordWatchHistory(browser_->url(), title);
+            const QUrl pageUrl = browser_->url();
+            if (pageUrl.host().contains(QStringLiteral("youtube.com")) && pageUrl.path() == QStringLiteral("/watch")) {
+                browser_->page()->runJavaScript(QStringLiteral("document.querySelector('#owner #channel-name a, ytd-channel-name a')?.textContent?.trim() || ''"),
+                    [this, pageUrl, title](const QVariant &channel) {
+                        if (!channel.toString().trimmed().isEmpty())
+                            recordWatchHistory(pageUrl, title, channel.toString().trimmed());
+                    });
+            }
         });
         connect(browser_, &QWebEngineView::loadStarted, this, [this] {
             statusBar()->showMessage(tr("Loading page…"));
@@ -883,6 +902,73 @@ private:
             url.setScheme(QStringLiteral("https"));
         }
         browser_->setUrl(url);
+    }
+
+    void recordWatchHistory(const QUrl &url, const QString &pageTitle, const QString &channel = QString()) {
+        const QString host = url.host().toLower();
+        const QString path = url.path();
+        const bool youtubeVideo = (host == QStringLiteral("youtube.com") || host.endsWith(QStringLiteral(".youtube.com")))
+            && (path == QStringLiteral("/watch") || path.startsWith(QStringLiteral("/shorts/")));
+        const bool shortVideo = host == QStringLiteral("youtu.be") && !path.isEmpty();
+        const bool streamingPage = host.contains(QStringLiteral("crunchyroll")) || host.contains(QStringLiteral("yummyanime"))
+            || host.contains(QStringLiteral("netflix"));
+        if ((!youtubeVideo && !shortVideo && !streamingPage) || url.isEmpty())
+            return;
+        QVariantList history = settings_.value(QStringLiteral("browser/watchHistory")).toList();
+        const QString urlText = url.toString(QUrl::FullyEncoded);
+        for (int i = history.size() - 1; i >= 0; --i) {
+            if (history[i].toMap().value(QStringLiteral("url")).toString() == urlText)
+                history.removeAt(i);
+        }
+        QVariantMap entry;
+        entry.insert(QStringLiteral("url"), urlText);
+        entry.insert(QStringLiteral("title"), pageTitle.trimmed().isEmpty() ? url.host() : pageTitle.trimmed());
+        if (!channel.isEmpty())
+            entry.insert(QStringLiteral("channel"), channel);
+        entry.insert(QStringLiteral("date"), QDateTime::currentDateTime().toString(Qt::ISODate));
+        history.prepend(entry);
+        while (history.size() > 100)
+            history.removeLast();
+        settings_.setValue(QStringLiteral("browser/watchHistory"), history);
+    }
+
+    void showWatchHistory() {
+        QDialog dialog(this);
+        dialog.setWindowTitle(tr("Watch history"));
+        dialog.resize(680, 440);
+        auto *layout = new QVBoxLayout(&dialog);
+        auto *list = new QListWidget(&dialog);
+        const QVariantList history = settings_.value(QStringLiteral("browser/watchHistory")).toList();
+        for (const QVariant &value : history) {
+            const QVariantMap entry = value.toMap();
+            QString label = entry.value(QStringLiteral("title")).toString();
+            const QString channel = entry.value(QStringLiteral("channel")).toString();
+            if (!channel.isEmpty())
+                label += QStringLiteral(" — ") + channel;
+            auto *item = new QListWidgetItem(label, list);
+            item->setToolTip(entry.value(QStringLiteral("url")).toString());
+            item->setData(Qt::UserRole, entry.value(QStringLiteral("url")));
+            item->setData(Qt::UserRole + 1, entry.value(QStringLiteral("date")));
+        }
+        layout->addWidget(list, 1);
+        auto *buttons = new QHBoxLayout();
+        auto *clearButton = new QPushButton(tr("Clear history"), &dialog);
+        auto *closeButton = new QPushButton(tr("Close"), &dialog);
+        buttons->addWidget(clearButton);
+        buttons->addStretch(1);
+        buttons->addWidget(closeButton);
+        layout->addLayout(buttons);
+        connect(list, &QListWidget::itemDoubleClicked, &dialog, [this, &dialog](QListWidgetItem *item) {
+            browser_->setUrl(QUrl(item->data(Qt::UserRole).toString()));
+            pages_->setCurrentWidget(browser_);
+            dialog.accept();
+        });
+        connect(clearButton, &QPushButton::clicked, &dialog, [this, list] {
+            settings_.remove(QStringLiteral("browser/watchHistory"));
+            list->clear();
+        });
+        connect(closeButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+        dialog.exec();
     }
 
     void showHomePage() {

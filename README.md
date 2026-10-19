@@ -13,6 +13,7 @@ Nebula Video is an early Linux desktop app that combines a web browser with a li
 - Check page image and HTML5 video loading from the toolbar's **?** button; page loading progress is shown in the status bar.
 - Block requests to a built-in list of common advertising and tracking hosts; the toolbar toggle shows the session count and reloads the page when changed.
 - Start from quick links to YouTube, Netflix, Crunchyroll and YummyAnime TV; add personal site shortcuts that are saved on the device.
+- Keep a local watch history for YouTube videos and supported streaming pages; YouTube entries include the channel name when it is available. Open **Watch history** in the toolbar to revisit or clear entries.
 - Enter a web address or search phrase in the address bar.
 - Find local videos in the standard Movies and Downloads folders on first launch; additional folders can be imported.
 - Scan imported folders recursively and filter the video list.
@@ -42,6 +43,7 @@ sudo cmake --install build
 ```
 
 After installation, launch **Nebula Video** from your desktop's application menu.
+
 Create the available distribution packages:
 
 ```sh
