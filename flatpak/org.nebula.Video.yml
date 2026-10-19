@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+app-id: org.nebula.Video
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: nebula-video
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=dri
+  - --filesystem=xdg-videos:ro
+  - --filesystem=xdg-download:ro
+modules:
+  - name: nebula-video
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/app
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .git
+          - build
+          - .flatpak-builder
+          - build-flatpak
