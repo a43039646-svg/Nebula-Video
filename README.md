@@ -35,6 +35,13 @@ cmake --build build -j
 ./build/nebula-video
 ```
 
+To install Nebula Video in the desktop applications menu with its icon, run:
+
+```sh
+sudo cmake --install build
+```
+
+After installation, launch **Nebula Video** from your desktop's application menu.
 Create the available distribution packages:
 
 ```sh
