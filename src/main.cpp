@@ -1291,6 +1291,7 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     QApplication::setApplicationName(QStringLiteral("Nebula Video"));
     QApplication::setOrganizationName(QStringLiteral("Nebula Project"));
+    QApplication::setWindowIcon(QIcon::fromTheme(QStringLiteral("org.nebula.Video")));
 
     QSettings preferences(QStringLiteral("NebulaProject"), QStringLiteral("NebulaVideo"));
     const QString defaultLanguage = QLocale().language() == QLocale::Russian ? QStringLiteral("ru") : QStringLiteral("en");
