@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[Desktop Entry]
+Type=Application
+Name=Nebula Video
+Name[ru]=Небула Видео
+GenericName=Video Browser and Player
+GenericName[ru]=Браузер видео и видеоплеер
+Comment=Browse video sites and play your local video library
+Comment[ru]=Смотрите видеосайты и запускайте видео из локальной библиотеки
+Exec=nebula-video
+Icon=org.nebula.Video
+Terminal=false
+Categories=AudioVideo;Video;Player;
+StartupNotify=true
