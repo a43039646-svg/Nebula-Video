@@ -1,13 +1,18 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Nebula Video</title>
+  <desc id="description">NV monogram in Nebula's cyan to violet gradient.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#a98bff"/>
-      <stop offset="1" stop-color="#5736b8"/>
+    <linearGradient id="nebula" x1="64" y1="128" x2="448" y2="384" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#18d8e8"/>
+      <stop offset="0.36" stop-color="#278dff"/>
+      <stop offset="0.7" stop-color="#8a4dff"/>
+      <stop offset="1" stop-color="#ed58e8"/>
     </linearGradient>
   </defs>
-  <rect x="12" y="12" width="232" height="232" rx="56" fill="#10101b"/>
-  <path d="M128 34 220 198H36Z" fill="url(#bg)"/>
-  <path d="m111 91 58 37-58 37z" fill="#fff"/>
-  <circle cx="194" cy="62" r="12" fill="#e8ddff"/>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#0c1020"/>
+  <g fill="none" stroke="url(#nebula)" stroke-width="48" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M82 384V128l150 256V128"/>
+    <path d="M280 128l74 256 76-256"/>
+  </g>
 </svg>
