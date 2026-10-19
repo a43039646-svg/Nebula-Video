@@ -1,0 +1,13 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a98bff"/>
+      <stop offset="1" stop-color="#5736b8"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="12" width="232" height="232" rx="56" fill="#10101b"/>
+  <path d="M128 34 220 198H36Z" fill="url(#bg)"/>
+  <path d="m111 91 58 37-58 37z" fill="#fff"/>
+  <circle cx="194" cy="62" r="12" fill="#e8ddff"/>
+</svg>
