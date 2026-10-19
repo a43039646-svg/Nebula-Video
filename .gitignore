@@ -1,0 +1,8 @@
+build/
+build-flatpak/
+.flatpak-builder/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.user
