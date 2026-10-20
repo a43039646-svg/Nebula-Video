@@ -10,6 +10,44 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets WebEngineCore WebEngineWidgets 
 
 qt_add_executable(nebula-video
     src/main.cpp
+    src/nebula_video_window.cpp
+    src/nebula_translator.cpp
+    src/nebula_theme.cpp
+)
+
+qt_add_resources(nebula-video "app_translations"
+    PREFIX "/locales"
+    BASE "${CMAKE_CURRENT_SOURCE_DIR}/locales"
+    FILES
+        locales/ru-RU.json
+        locales/es-ES.json
+        locales/fr-FR.json
+        locales/de-DE.json
+        locales/pt-BR.json
+        locales/zh-CN.json
+        locales/ja-JP.json
+        locales/uk-UA.json
+        locales/be-BY.json
+        locales/lv-LV.json
+        locales/it-IT.json
+        locales/pl-PL.json
+        locales/tr-TR.json
+        locales/nl-NL.json
+        locales/ko-KR.json
+        locales/ar-SA.json
+        locales/hi-IN.json
+        locales/id-ID.json
+        locales/vi-VN.json
+        locales/sv-SE.json
+        locales/cs-CZ.json
+        locales/ro-RO.json
+        locales/da-DK.json
+        locales/fi-FI.json
+        locales/nb-NO.json
+        locales/el-GR.json
+        locales/bg-BG.json
+        locales/sr-RS.json
+        locales/hu-HU.json
 )
 
 target_link_libraries(nebula-video PRIVATE

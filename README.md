@@ -6,7 +6,8 @@ Nebula Video is an early Linux desktop app that combines a web browser with a li
 
 - Browse websites in an embedded Chromium-based view.
 - Size the window to the current screen and adapt the sidebar and home shortcut grid for narrower displays.
-- Switch between Russian and English from **Settings**. The selection also changes the preferred language sent to websites and applies on restart.
+- Choose English, Russian, Spanish, French, German, Brazilian Portuguese, Simplified Chinese, Japanese, Ukrainian, Belarusian, Latvian, Italian, Polish, Turkish, Dutch, Korean, Arabic, Hindi, Indonesian, Vietnamese, Swedish, Czech, Romanian, Danish, Finnish, Norwegian, Greek, Bulgarian, Serbian, or Hungarian in **Settings**. The selection also changes the preferred language sent to websites and applies on restart. On first launch, Nebula Video uses a supported language from your system settings, or English if there is no match.
+  Some detailed playback diagnostics and theme names in the newly added languages currently fall back to English.
 - Choose a distribution-inspired interface theme, or let Nebula Video select one from the Linux distribution ID. Presets include Ubuntu, Fedora, Arch, Debian, Linux Mint, openSUSE, KDE Breeze and Nebula.
 - Manage saved VPN profiles from **VPN** using NetworkManager; import OpenVPN `.ovpn` files and connect or disconnect existing VPN profiles.
 - Choose embedded audio and subtitle tracks for local videos when the media file and Qt multimedia backend expose those tracks.
